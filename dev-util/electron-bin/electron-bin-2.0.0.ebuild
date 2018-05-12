@@ -8,11 +8,15 @@ DESCRIPTION="Cross platform application development framework based on web techn
 HOMEPAGE="https://electron.atom.io"
 SRC_URI="amd64? ( ${SRC_URI_BASE}/v${PV}/${PN/-bin}-v${PV}-linux-x64.zip -> ${P}-x64.zip )
 	x86? ( ${SRC_URI_BASE}/v${PV}/${PN/-bin}-v${PV}-linux-ia32.zip -> ${P}-ia32.zip )"
+	arm? ( ${SRC_URI_BASE}/v${PV}/${PN/-bin}-v${PV}-linux-arm.zip -> ${P}-arm.zip )"
+	arm64? ( ${SRC_URI_BASE}/v${PV}/${PN/-bin}-v${PV}-linux-arm64.zip -> ${P}-arm64.zip )"
+	#https://github.com/electron/electron/releases/download/v2.0.0-beta.8/electron-v2.0.0-beta.8-linux-arm64.zip
+	#https://github.com/electron/electron/releases/download/v2.0.0-beta.8/electron-v2.0.0-beta.8-linux-arm.zip
 RESTRICT="mirror"
 
 LICENSE="MIT"
 SLOT="2.0"
-KEYWORDS="-* ~amd64 ~x86"
+KEYWORDS="-* ~amd64 ~x86 ~arm ~arm64"
 
 RDEPEND="dev-libs/nss
 	dev-libs/expat
