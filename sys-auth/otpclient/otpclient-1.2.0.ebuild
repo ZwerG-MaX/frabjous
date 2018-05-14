@@ -5,7 +5,7 @@ EAPI=6
 
 inherit cmake-utils gnome2-utils xdg-utils
 
-DESCRIPTION="Simple GTK+ v3 OTP client (TOTP and HOTP)"
+DESCRIPTION="Simple GTK+ 3 OTP client (TOTP and HOTP)"
 HOMEPAGE="https://github.com/paolostivanin/OTPClient"
 SRC_URI="https://github.com/paolostivanin/OTPClient/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"

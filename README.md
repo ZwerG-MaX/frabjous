@@ -165,7 +165,7 @@ sys-apps/**[bat](sys-apps/bat)** | A 'cat' clone with syntax highlighting and Gi
 sys-apps/**[exa](sys-apps/exa)** | A replacement for 'ls' written in Rust
 sys-apps/**[fd](sys-apps/fd)** | A simple, fast and user-friendly alternative to 'find'
 sys-apps/**[yarn](sys-apps/yarn)** | Fast, reliable, and secure node dependency management
-sys-auth/**[otpclient](sys-auth/otpclient)** | Simple GTK+ v3 OTP client (TOTP and HOTP
+sys-auth/**[otpclient](sys-auth/otpclient)** | Simple GTK+ 3 OTP client (TOTP and HOTP)
 sys-auth/**[pam_u2f](sys-auth/pam_u2f)** | Library for authenticating against PAM with a Yubikey
 sys-auth/**[yubikey-touch-detector](sys-auth/yubikey-touch-detector)** | A tool that can detect when your YubiKey is waiting for a touch
 sys-fs/**[gocryptfs](sys-fs/gocryptfs)** | Encrypted overlay filesystem written in Go
