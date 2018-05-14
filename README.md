@@ -1,5 +1,5 @@
 ## _Welcome to the Frabjous Gentoo overlay!_
-![ebuilds 258](https://img.shields.io/badge/ebuilds-258-orange.svg?style=flat-square)
+![ebuilds 260](https://img.shields.io/badge/ebuilds-260-orange.svg?style=flat-square)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/csmk/frabjous.svg?style=flat-square)
 [![Travis branch](https://img.shields.io/travis/csmk/frabjous/master.svg?style=flat-square)](https://travis-ci.org/csmk/frabjous)
 
@@ -81,6 +81,9 @@ app-crypt/**[minisign](app-crypt/minisign)** | A dead simple tool to sign files 
 app-crypt/**[opmsg](app-crypt/opmsg)** | opmsg message encryption (an alternative to GnuPG)
 app-crypt/**[ssh-vault](app-crypt/ssh-vault)** | Encrypt/Decrypt using SSH private keys
 app-editors/**[micro](app-editors/micro)** | A modern and intuitive terminal-based text editor
+app-emulation/**[containerd](app-emulation/containerd)** | A daemon to control runC
+app-emulation/**[docker-proxy](app-emulation/docker-proxy)** | Docker container networking
+app-emulation/**[runc](app-emulation/runc)** | CLI tool for spawning and running containers
 app-misc/**[watchexec](app-misc/watchexec)** | Executes commands in response to file modifications
 app-misc/**[watchman](app-misc/watchman)** | An inotify-based file watching and job triggering command line utility
 app-shells/**[antibody](app-shells/antibody)** | The fastest shell plugin manager
