@@ -13,7 +13,7 @@ DESCRIPTION="A painless self-hosted Git service"
 HOMEPAGE="https://gogs.io"
 SRC_URI="https://${EGO_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	${EGO_VENDOR_URI}"
-RESTRICT="mirror strip"
+RESTRICT="mirror"
 
 LICENSE="MIT"
 SLOT="0"
@@ -29,6 +29,8 @@ RDEPEND="dev-vcs/git[curl,threads]
 	redis? ( dev-db/redis )
 	sqlite? ( dev-db/sqlite )
 	tidb? ( dev-db/tidb )"
+
+QA_PRESTRIPPED="usr/bin/gogs"
 
 G="${WORKDIR}/${P}"
 S="${G}/src/${EGO_PN}"
@@ -62,7 +64,7 @@ src_prepare() {
 
 src_compile() {
 	export GOPATH="${G}"
-	local PATH="${G}/bin:$PATH" TAGS_OPTS=
+	local PATH="${G}/bin:$PATH"
 
 	ebegin "Building go-bindata locally"
 	pushd vendor/github.com/kevinburke/go-bindata > /dev/null || die
@@ -71,14 +73,18 @@ src_compile() {
 	popd > /dev/null || die
 	eend $?
 
-	use cert && TAGS_OPTS+=" cert"
-	use pam && TAGS_OPTS+=" pam"
-	use sqlite && TAGS_OPTS+=" sqlite"
-	use tidb && TAGS_OPTS+=" tidb"
+	# build up optional flags
+	local options=(
+		$(usex cert cert '')
+		$(usex pam pam '')
+		$(usex sqlite sqlite '')
+		$(usex tidb tidb '')
+	)
 
-	LDFLAGS="-s -w" \
-	TAGS="${TAGS_OPTS/ /}" \
-	emake build
+	emake \
+		LDFLAGS="-s -w" \
+		TAGS="${options[*]}" \
+		build
 }
 
 src_test() {
