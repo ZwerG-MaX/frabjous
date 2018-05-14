@@ -94,10 +94,10 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${CMAKE_USE_DIR}"
-		-DBUILD_DOCUMENTATION=$(usex doc)
+		-DBUILD_DOCUMENTATION=$(usex doc ON OFF)
 		-DBUILD_GUI_DEPS=ON
-		-DSTACK_TRACE=$(usex unwind)
-		-DUSE_READLINE=$(usex readline)
+		-DSTACK_TRACE=$(usex unwind ON OFF)
+		-DUSE_READLINE=$(usex readline ON OFF)
 	)
 	cmake-utils_src_configure
 }
@@ -151,14 +151,15 @@ src_install() {
 		done
 	fi
 
+	pushd "${BUILD_DIR}"/bin >/dev/null || die
 	if use daemon; then
-		dobin "${BUILD_DIR}"/bin/monerod
+		dobin monerod
 
 		newinitd "${FILESDIR}"/${PN}.initd monero
 		systemd_newunit "${FILESDIR}"/${PN}.service monero.service
 
 		insinto /etc/monero
-		newins monero/utils/conf/monerod.conf \
+		newins "${S}"/monero/utils/conf/monerod.conf \
 			monerod.conf.example
 
 		diropts -o monero -g monero -m 0750
@@ -166,12 +167,13 @@ src_install() {
 	fi
 
 	use simplewallet && \
-		dobin "${BUILD_DIR}"/bin/monero-wallet-cli
+		dobin monero-wallet-cli
 
 	if use utils; then
-		dobin "${BUILD_DIR}"/bin/monero-blockchain-export
-		dobin "${BUILD_DIR}"/bin/monero-blockchain-import
+		dobin monero-blockchain-export
+		dobin monero-blockchain-import
 	fi
+	popd > /dev/null || die
 
 	if use doc; then
 		docinto html
