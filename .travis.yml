@@ -8,7 +8,6 @@ notifications:
 env:
     global:
         - PORTAGE_VER="2.3.36"
-        - REPOMAN_VER="2.3.6"
 before_install:
     - sudo apt-get -qq update
     - pip install lxml pyyaml
@@ -19,7 +18,6 @@ before_script:
     - mv .git travis-overlay/
     - wget "https://raw.githubusercontent.com/mrueg/repoman-travis/master/spinner.sh"
     - wget -qO - "https://github.com/gentoo/portage/archive/portage-${PORTAGE_VER}.tar.gz" | tar xz
-    - wget -qO - "https://github.com/gentoo/portage/archive/repoman-${REPOMAN_VER}.tar.gz" | tar xz
     - wget -qO - "https://github.com/gentoo-mirror/gentoo/archive/master.tar.gz" | tar xz -C /usr/portage --strip-components=1
     - chmod a+rwx spinner.sh
     - echo "portage:x:250:250:portage:/var/tmp/portage:/bin/false" >> /etc/passwd
@@ -29,4 +27,4 @@ before_script:
     - ln -s /usr/portage/profiles/default/linux/amd64/13.0 /etc/portage/make.profile
     - cd travis-overlay
 script:
-    - ./../spinner.sh "python ../portage-repoman-${REPOMAN_VER}/repoman/bin/repoman full -i -d --without-mask"
+    - ./../spinner.sh "python ../portage-portage-${PORTAGE_VER}/repoman/bin/repoman full -i -d --without-mask"
