@@ -12,6 +12,7 @@ DESCRIPTION="Gitea - Git with a cup of tea"
 HOMEPAGE="https://gitea.io"
 SRC_URI="https://github.com/go-gitea/gitea/archive/v${PV/_/-}.tar.gz -> ${P}.tar.gz
 	${EGO_VENDOR_URI}"
+RESTRICT="mirror"
 
 LICENSE="MIT"
 SLOT="0"
@@ -27,7 +28,8 @@ RDEPEND="dev-vcs/git[curl,threads]
 	redis? ( dev-db/redis )
 	sqlite? ( dev-db/sqlite )
 	tidb? ( dev-db/tidb )"
-RESTRICT="mirror strip"
+
+QA_PRESTRIPPED="usr/bin/gitea"
 
 G="${WORKDIR}/${P}"
 S="${G}/src/${EGO_PN}"
@@ -59,7 +61,7 @@ src_prepare() {
 
 src_compile() {
 	export GOPATH="${G}"
-	local PATH="${G}/bin:$PATH" TAGS_OPTS=
+	local PATH="${G}/bin:$PATH"
 
 	ebegin "Building go-bindata locally"
 	pushd vendor/github.com/kevinburke/go-bindata > /dev/null || die
@@ -68,12 +70,16 @@ src_compile() {
 	popd > /dev/null || die
 	eend $?
 
-	use pam && TAGS_OPTS+=" pam"
-	use sqlite && TAGS_OPTS+=" sqlite"
-	use tidb && TAGS_OPTS+=" tidb"
+	# build up optional flags
+	local options=(
+		$(usex pam pam '')
+		$(usex sqlite sqlite '')
+		$(usex tidb tidb '')
+	)
 
-	TAGS="${TAGS_OPTS/ /}" \
-	emake generate build
+	emake \
+		TAGS="${options[*]}" \
+		generate build
 }
 
 src_test() {
