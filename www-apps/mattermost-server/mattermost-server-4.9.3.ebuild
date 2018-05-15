@@ -5,23 +5,26 @@ EAPI=6
 
 inherit systemd user
 
+GIT_COMMIT="416c752" # Change this when you update the ebuild
+EGO_PN="github.com/mattermost/${PN}"
 MMWAPP_PN="mattermost-webapp"
 MMWAPP_P="${MMWAPP_PN}-${PV}"
 
-GIT_COMMIT="416c752"
-EGO_PN="github.com/mattermost/${PN}"
 DESCRIPTION="Open source Slack-alternative in Golang and React"
 HOMEPAGE="https://mattermost.com"
 SRC_URI="https://github.com/mattermost/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	https://github.com/mattermost/${MMWAPP_PN}/archive/v${PV}.tar.gz -> ${MMWAPP_P}.tar.gz"
-RESTRICT="mirror strip test"
+RESTRICT="mirror test"
 
 LICENSE="AGPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
+IUSE="pie"
 
 DEPEND=">=net-libs/nodejs-6.0.0
 	sys-apps/yarn"
+
+QA_PRESTRIPPED="usr/libexec/mattermost/bin/platform"
 
 G="${WORKDIR}"
 S="${G}/src/${EGO_PN}"
@@ -51,9 +54,9 @@ src_prepare() {
 		-e 's|"ListenAddress": ":8067"|"ListenAddress": "127.0.0.1:8067"|g' \
 		-e 's|"ConsoleLevel": "DEBUG"|"ConsoleLevel": "INFO"|g' \
 		-e 's|"EnableDiagnostics":.*|"EnableDiagnostics": false|' \
-		-e 's|"Directory": "./data/"|"Directory": "'${EPREFIX}}'/var/lib/mattermost/data"|g' \
-		-e 's|"Directory": "./plugins"|"Directory": "'${EPREFIX}}'/var/lib/mattermost/plugins"|g' \
-		-e 's|"ClientDirectory": "./client/plugins"|"Directory": "'${EPREFIX}}'/var/lib/mattermost/client/plugins"|g' \
+		-e 's|"Directory": "./data/"|"Directory": "'${EPREFIX}'/var/lib/mattermost/data/"|g' \
+		-e 's|"Directory": "./plugins"|"Directory": "'${EPREFIX}'/var/lib/mattermost/plugins"|g' \
+		-e 's|"ClientDirectory": "./client/plugins"|"ClientDirectory": "'${EPREFIX}'/var/lib/mattermost/client/plugins"|g' \
 		-e 's|tcp(dockerhost:3306)|unix(/run/mysqld/mysqld.sock)|g' \
 		config/default.json || die
 
@@ -70,17 +73,23 @@ src_prepare() {
 
 src_compile() {
 	export GOPATH="${G}"
-	local GOLDFLAGS="-s -w
-	-X ${EGO_PN}/model.BuildNumber=${PV}
-	-X '${EGO_PN}/model.BuildDate=$(date -u)'
-	-X ${EGO_PN}/model.BuildHash=${GIT_COMMIT}
-	-X ${EGO_PN}/model.BuildHashEnterprise=none
-	-X ${EGO_PN}/model.BuildEnterpriseReady=false"
+	local mygoargs=(
+		-v -work -x
+		$(usex pie '-buildmode=pie' '')
+		-asmflags "-trimpath=${S}"
+		-gcflags "-trimpath=${S}"
+		-ldflags "-s -w
+			-X ${EGO_PN}/model.BuildNumber=${PV}
+			-X '${EGO_PN}/model.BuildDate=$(date -u)'
+			-X ${EGO_PN}/model.BuildHash=${GIT_COMMIT}
+			-X ${EGO_PN}/model.BuildHashEnterprise=none
+			-X ${EGO_PN}/model.BuildEnterpriseReady=false"
+		-o ./platform
+	)
 
 	emake -C client build
 
-	go build -v -ldflags "${GOLDFLAGS}" \
-		-o "${S}"/platform || die
+	go build "${mygoargs[@]}" || die
 }
 
 src_install() {
